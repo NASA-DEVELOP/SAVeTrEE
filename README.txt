@@ -2,20 +2,11 @@ SAVETREE
 V2 Code created: 11/17/17
 
 
-SAVETREE is a tool developed in Google Earth Engine for the Lassen Volcanic National park, it creates map layers of trends in tree mortality and adds them to the map. The user can select which spectral indices, areas of interest, years, duration and fire history to add. The user can export their new map in the form of TIFF files, and the user can produce graphs which track the changes in the time series for a particular pixel by clicking on the layer.  
-Getting Started
-These instructions will help you get started using the SAVETREE tool.
-Prerequisites
-First of all, you will need a Google account that has access to Google Earth Engine. We have set up an account for LVNP at lavo.savetree@gmail.com. You can access this code by going to this link: 
- 
-Or by signing into lavo.savetree@gmail.com and following this link: https://code.earthengine.google.com/# and finding the Savetree code under “Owner”.
-The path is users/savetree/savetree/SAVETREE.
+Simple Analysis of Vegetative Trends in Earth Engine - SAVETREE - is a tool developed in Google Earth Engine for the Lassen Volcanic National park, it estimates tree mortality by fitting a linear trend to time serries data of a user chosen spectral index. The user can export their new map in the form of TIFF files,add historic fire layers, and the user can produce graphs which view the values in the time series for a particular pixel by clicking on the layer.  
 
-
-
-
-Required packages
-The required data for running the script has been loaded into the assets of the lavo.savetree@gmail.com Google Earth Engine account. Generally, the data can be found in the “users/savetree” library in Google Earth Engine. These shapefiles can also be found in the final deliverables package. 
+SAVETREE was developed over two terms with DEVELOP:
+* Authors v1.0: Joshua Verkerke, Anna McGarrigle, John Dilger
+* Authors v2.0: Heather Myers, Anna McGarrigle, Peter Norton, Andrea Ferrer
 
 
 Running SAVETREE
