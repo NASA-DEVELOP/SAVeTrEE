@@ -143,10 +143,10 @@ function applyFilters() {
   var getICSR = function(year){
     year = ee.Number(year);
     var IC = ee.Algorithms.If(
-                year.eq(ee.Number(2012)),ee.ImageCollection('LANDSAT/LE7_SR'),
+                year.eq(ee.Number(2012)),ee.ImageCollection('LANDSAT/LE07/C01/T1_SR'),
                 ee.Algorithms.If(year.gt(ee.Number(2012)),
-                    ee.ImageCollection('LANDSAT/LC8_SR'),
-                    ee.ImageCollection('LANDSAT/LT5_SR')));
+                    ee.ImageCollection('LANDSAT/LC08/C01/T1_SR'),
+                    ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')));
     var ICfilter = ee.ImageCollection(IC).filter(ee.Filter.dayOfYear(135,258))
                                                 //15May->15Sep (Peak Green)
                       .filter(ee.Filter.calendarRange(year,year,'year'))
@@ -156,28 +156,24 @@ function applyFilters() {
   
   // Rename image bands to simplify processing
   var bandRename = function(image){
-    var year = ee.Number.parse(ee.String(image.get('system:index'))
-      .slice(9,13));
+    var year = ee.Number.parse(ee.String(image.get('system:index')).slice(-8,-4));
     var renameList = ee.Algorithms.If(year.gt(ee.Number(2012)),
-        ['AEROSOL','BLUE','GREEN','RED','NIR','SWIR1',
-        'SWIR2','cfmask','cfmask_conf'],
-            ['BLUE','GREEN','RED','NIR','SWIR1','SWIR2','cfmask','cfmask_conf',
-            'sr_atmos_opacity','sr_adjacent_cloud_qa','sr_cloud_qa',
-            'sr_cloud_shadow_qa','sr_ddv_qa','sr_fill_qa',
-            'sr_land_water_qa','sr_snow_qa']);
+        ['AEROSOL','BLUE','GREEN','RED','NIR','SWIR1','SWIR2','cfmask',
+        'cfmask_conf','SR_AEROSOL','PIXEL_QA','RADSAT_QA'],
+            ['BLUE','GREEN','RED','NIR','SWIR1','THERMAL','SWIR2',
+            'sr_atmos_opacity','sr_cloud_qa', 'pixel_qa','radsat_qa']);
     return image.rename(renameList);
   };
   
   //grab cloud band and add it to SR image to evaluate image quality
   var cloudSR = function(image){
     var time = image.get('system:time_start');
-    var year = ee.Number.parse(ee.String(image.get('system:index'))
-                .slice(9,13));
+    var year = ee.Number.parse(ee.String(image.get('system:index')).slice(-8,-4));
     var ICTOA = ee.ImageCollection(ee.Algorithms.If(year.eq(ee.Number(2012)),
-      ee.ImageCollection('LANDSAT/LE7_L1T_TOA'),
+      ee.ImageCollection('LANDSAT/LE07/C01/T1_TOA'),
       ee.Algorithms.If(year.gt(ee.Number(2012)),
-        ee.ImageCollection('LANDSAT/LC8_L1T_TOA'),
-        ee.ImageCollection('LANDSAT/LT5_L1T_TOA'))));
+        ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA'),
+        ee.ImageCollection('LANDSAT/LT05/C01/T1_TOA'))));
     var TOAImg = ee.Image(ICTOA.filter(
       ee.Filter.eq('system:time_start',time)).first());
     var cloudband = ee.Algorithms.Landsat.simpleCloudScore(TOAImg)
