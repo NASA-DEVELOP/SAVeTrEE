@@ -1,4 +1,3 @@
-
 /*****************************SAVETREE 2.0*********************************** * 
 * Script: SAVETREE 2.0                                                        *
 * Authors v1.0: Joshua Verkerke, Anna McGarrigle, John Dilger                 *
@@ -30,7 +29,7 @@
 *      analysis of that particular pixel in the widget                        *
 *                                                                             *
 *  Usage: Requires access to Earth Engine Assets from the Library:            *
-*   “users/savetree/”                                                         *
+*   â€œusers/savetree/â€                                                         *
 *                                                                             *
 *  Parameters:                                                                *    
 *    In: Year for Mortality Map, Duration for analysis, Spectral Index (SI)   *
@@ -119,9 +118,9 @@ function setAreaOfInterest(){
   }//sets the area to the Study Area
   else if (aoi == OWN){
       var userInput = inputTextbox.getValue();
-      if (userInput) userInput = ee.String(userInput);
-      var userSupplied = ee.FeatureCollection(userInput);
-      areaOfInterest = userSupplied;
+      userInput = ee.String(userInput);
+      
+      areaOfInterest = ee.FeatureCollection(userInput);
   }//sets the area of interest to an asset input by the user
 }//A function which sets the area of interest 
 
@@ -129,7 +128,7 @@ function setAreaOfInterest(){
 function applyFilters() {
   // Set area of interest
   setAreaOfInterest();
-
+    
   // Set filter variables
   yr = selectYr.getValue();
   if (yr) yr = ee.Number.parse(yr);
@@ -150,7 +149,7 @@ function applyFilters() {
     var ICfilter = ee.ImageCollection(IC).filter(ee.Filter.dayOfYear(135,258))
                                                 //15May->15Sep (Peak Green)
                       .filter(ee.Filter.calendarRange(year,year,'year'))
-                      .filterBounds(lvnpCenter);
+                      .filterBounds(areaOfInterest);
     return ICfilter;
   };
   
@@ -337,10 +336,14 @@ function setFireHistoryData(){
     dataUsed = frap.filter(dateFilter).filterBounds(areaOfInterest);
   }//fire history data set to wildfires
   else if (dataSelected == MYFIREDATA){
-    var userInput = inputTextbox2.getValue(); //input data from the user, a "YEAR_" field
-    if (userInput) userInput = ee.String(userInput); //ensures the user input is a string
+    var userInput = ownAssetInput.getValue(); //input data from the user, a "YEAR_" field
+    userInput = ee.String(userInput); //ensures the user input is a string
     var userSuppliedFire = ee.FeatureCollection(userInput); //turns the input into a feature collection
-    dataUsed = userSuppliedFire.filter(dateFilter).filterBounds(areaOfInterest);
+    if (userSuppliedFire.filter(dateFilter) === true){ //if input has a year attribute it will be filtered
+      dataUsed = userSuppliedFire.filter(dateFilter).filterBounds(areaOfInterest);
+    } else{
+      dataUsed = userSuppliedFire.filterBounds(areaOfInterest);
+    }
   }
 var empty = ee.Image().byte();
 var outline = empty.paint({
@@ -352,18 +355,25 @@ Map.centerObject(areaOfInterest,10);
 Map.addLayer(outline, {palette: 'white'}, dataSelected);//Add fires as white outlines
 }//sets the fire history data to a set selected by the user
 
+
+/// Does this even need to be here??????
 // A function to apply user AOI input dataset
-function applyMine(){
-  setAreaOfInterest(); //sets the area of interest depending on what is selected on dropdown menu
-  var start = selectStartYear.getValue(); //user provided start year
-  var end = selectEndYear.getValue();     //user provided end year
-  var userInput = inputTextbox2.getValue(); //input data from the user, a "YEAR_" field
-  if (userInput) userInput = ee.String(userInput); //ensures the user input is a string
-  var userSuppliedFire = ee.FeatureCollection(userInput); //turns the input into a feature collection
-  myFire = userSuppliedFire.filter(ee.Filter.rangeContains('YEAR_', start, end)); //filters based on year
-  Map.centerObject(areaOfInterest,10);
-  Map.addLayer(myFire,{color:'f98a5b'},'My Fire Data', true, 1);
-}//Takes a user supplied asset and applies the year filter to it
+// function applyMine(){
+//   setAreaOfInterest(); //sets the area of interest depending on what is selected on dropdown menu
+//   var start = selectStartYear.getValue(); //user provided start year
+//   var end = selectEndYear.getValue();     //user provided end year
+//   var userInput = inputTextbox2.getValue(); //input data from the user, a "YEAR_" field
+//   if (userInput) userInput = ee.String(userInput); //ensures the user input is a string
+//   var userSuppliedFire = ee.FeatureCollection(userInput); //turns the input into a feature collection
+//   if (userSuppliedFire.filter(ee.Filter.rangeContains('YEAR_', start, end)) === true){
+//     myFire = userSuppliedFire.filter(ee.Filter.rangeContains('YEAR_', start, end)); //filters based on year
+//   } else{
+//     print('Fire Layer does not contain Year field')
+//   }
+ 
+//   Map.centerObject(areaOfInterest,10);
+//   Map.addLayer(myFire,{color:'f98a5b'},'My Fire Data', true, 1);
+// }//Takes a user supplied asset and applies the year filter to it
 
 
 
@@ -712,5 +722,3 @@ indexChart.setOptions({
 panel.add(indexChart);
 });
 Map.style().set('cursor', 'crosshair');
-
-
