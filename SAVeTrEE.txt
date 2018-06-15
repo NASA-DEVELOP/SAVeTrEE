@@ -356,25 +356,6 @@ Map.addLayer(outline, {palette: 'white'}, dataSelected);//Add fires as white out
 }//sets the fire history data to a set selected by the user
 
 
-/// Does this even need to be here??????
-// A function to apply user AOI input dataset
-// function applyMine(){
-//   setAreaOfInterest(); //sets the area of interest depending on what is selected on dropdown menu
-//   var start = selectStartYear.getValue(); //user provided start year
-//   var end = selectEndYear.getValue();     //user provided end year
-//   var userInput = inputTextbox2.getValue(); //input data from the user, a "YEAR_" field
-//   if (userInput) userInput = ee.String(userInput); //ensures the user input is a string
-//   var userSuppliedFire = ee.FeatureCollection(userInput); //turns the input into a feature collection
-//   if (userSuppliedFire.filter(ee.Filter.rangeContains('YEAR_', start, end)) === true){
-//     myFire = userSuppliedFire.filter(ee.Filter.rangeContains('YEAR_', start, end)); //filters based on year
-//   } else{
-//     print('Fire Layer does not contain Year field')
-//   }
- 
-//   Map.centerObject(areaOfInterest,10);
-//   Map.addLayer(myFire,{color:'f98a5b'},'My Fire Data', true, 1);
-// }//Takes a user supplied asset and applies the year filter to it
-
 
 
 ///////////////////////////////////////////////////////////////
